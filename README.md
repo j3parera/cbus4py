@@ -1,2 +1,2 @@
 # cbus
-Python implementation of MERG CBUS
+Python implementation of MERG CBUS protocol
