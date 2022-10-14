@@ -1,0 +1,19 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos.
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "CBUS Server",
+            "type": "python",
+            "request": "launch",
+            "module": "mpi_cbus_server",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/mpi_cbus",
+            "env": {
+                "PYTHONPATH": "${cwd}"
+            }
+        }
+    ]
+}
