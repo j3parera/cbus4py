@@ -131,3 +131,6 @@ dmypy.json
 # not mine
 docs/
 refers/
+
+# History plugin
+.history/
