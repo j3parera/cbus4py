@@ -1,16 +1,37 @@
-from enum import Enum, unique
-from typing import Optional, Type
+"""Python implementation of MERG CBUS Protocol.
+
+Current version comforms with CBUS Spec 6c.
+
+"""
 import re
 import struct
+from enum import Enum, unique
+from typing import Optional, Type
 
 
 class CBusError(Exception):
+    """
+    Generic CBUS Error.
+
+    Attributes:
+        _code (int): Exception error code.
+
+    """
+
     def __init__(self, code: int, msg: str) -> None:
+        """
+        Instance initialization.
+
+        Args:
+            code (int): Exception error code.
+            msg (str): Human readable string describing the exception.
+        """
         super().__init__(msg)
         self._code = code
 
     @property
     def code(self):
+        """Returns the exception error code."""
         return self._code
 
 
