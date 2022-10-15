@@ -36,6 +36,9 @@ class CBusError(Exception):
 
 
 class CommadStationError(CBusError):
+    """
+    Command Station Error.
+    """
 
     LOCO_STACK_FULL = 1
     LOCO_ADDRESS_TAKEN = 2
