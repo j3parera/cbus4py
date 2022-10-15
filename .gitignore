@@ -129,8 +129,7 @@ dmypy.json
 .pyre/
 
 # not mine
-docs/
-refers/
+references/
 
 # History plugin
 .history/
