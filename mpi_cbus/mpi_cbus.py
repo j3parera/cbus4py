@@ -51,6 +51,10 @@ class CommadStationError(CBusError):
 
 
 class ErrorLocoStackFull(CommadStationError):
+    """
+    Loco Stack Full Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.LOCO_STACK_FULL, "CS: Loco stack full")
 
@@ -172,6 +176,16 @@ class MinorPriority(Enum):
 class Header:
     @classmethod
     def parse(cls: Type["Header"], data: bytes) -> "Header":
+        """
+        _summary_
+
+        :param cls: _description_
+        :type cls: Type[&quot;Header&quot;]
+        :param data: _description_
+        :type data: bytes
+        :return: _description_
+        :rtype: Header
+        """
         sidh = data[0]
         sidl = data[1]
         maj_prio = MajorPriority((sidh >> 6) & 0x03)

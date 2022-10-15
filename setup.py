@@ -6,7 +6,7 @@ from typing import List
 
 from setuptools import find_packages, setup
 
-with open("README.md", encoding="utf-8") as readme_file:
+with open("README.rst", encoding="utf-8") as readme_file:
     readme = readme_file.read()
 
 requirements: List[str] = []
