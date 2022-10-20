@@ -1,7 +1,5 @@
 """Python implementation of MERG CBUS Protocol.
-
 Current version comforms with CBUS Spec 6c.
-
 """
 import re
 import struct
@@ -175,16 +173,15 @@ class MinorPriority(Enum):
 
 class Header:
     @classmethod
-    def parse(cls: Type["Header"], data: bytes) -> "Header":
+    def from_bytes(cls: Type["Header"], data: bytes) -> "Header":
         """
-        _summary_
+        Constructs a CBus message header from at least two bytes of data.
 
-        :param cls: _description_
-        :type cls: Type[&quot;Header&quot;]
-        :param data: _description_
-        :type data: bytes
-        :return: _description_
-        :rtype: Header
+        Args:
+            data (bytes): bytes object containing the header.
+
+        Returns:
+            Header: the CBus message header contained in data.
         """
         sidh = data[0]
         sidl = data[1]
@@ -195,6 +192,16 @@ class Header:
 
     @classmethod
     def make_minor_priority(cls: Type["Header"], min_prio: MinorPriority, can_id: int) -> "Header":
+        """
+        _summary_
+
+        Args:
+            min_prio (MinorPriority): _description_
+            can_id (int): _description_
+
+        Returns:
+            Header: _description_
+        """
         return cls(MajorPriority.NORMAL, min_prio, can_id)
 
     def __init__(self, maj_prio: MajorPriority, min_prio: MinorPriority, can_id: int) -> None:
@@ -702,7 +709,7 @@ class Frame:
         frames_spec = cls.format.findall(data)
         frames = list()
         for frame in frames_spec:
-            header = Header.parse(bytes.fromhex(frame[0].decode("ascii")))
+            header = Header.from_bytes(bytes.fromhex(frame[0].decode("ascii")))
             msg = Message.parse(bytes.fromhex(frame[2].decode("ascii")))
             frames.append(cls(header, msg, rtr=(frame[1] == "R")))
         return frames
