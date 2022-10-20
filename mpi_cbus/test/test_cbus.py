@@ -1,6 +1,6 @@
 from unittest import TestCase, main
 
-import mpi_cbus as cbus
+from .. import mpi_cbus as cbus
 
 
 class TestStandardHeader(TestCase):
@@ -28,8 +28,8 @@ class TestStandardHeader(TestCase):
         self.assertEqual(sh.can_header, bytes([(0x7420 >> 5) >> 8, (0x7420 >> 5) & 0xFF]))
         self.assertEqual(sh.ascii_header.upper(), b"7420")
 
-    def test_parse(self):
-        sh1 = cbus.Header.parse(bytes.fromhex("7420"))
+    def test_from_bytes(self):
+        sh1 = cbus.Header.from_bytes(b"\x74\x20")
         sh2 = cbus.Header(cbus.MajorPriority.HIGH, cbus.MinorPriority.LOW, can_id=33)
         self.assertEqual(sh1, sh2)
 

@@ -1,4 +1,4 @@
-mpi_cbus
-=======================================
+MPI_CBUS
+=======
 
-Python implementation of MERG CBUS protocol
+Python implementation of MERG CBUS protocol.
