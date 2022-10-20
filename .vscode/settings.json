@@ -1,13 +1,13 @@
 {
+    "autoDocstring.startOnNewLine": true,
+    "autoDocstring.includeName": false,
     "python.testing.unittestArgs": [
         "-v",
         "-s",
-        "./mpi_cbus",
+        "./tests",
         "-p",
         "test_*.py"
     ],
     "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": true,
-    "autoDocstring.startOnNewLine": true,
-    "autoDocstring.includeName": false
+    "python.testing.unittestEnabled": true
 }
