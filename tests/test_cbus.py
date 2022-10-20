@@ -1,6 +1,6 @@
 from unittest import TestCase, main
 
-import src.mpi_cbus.mpi_cbus as cbus
+import mpi_cbus as cbus
 
 
 class TestStandardHeader(TestCase):
