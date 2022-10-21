@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mpi_cbus"
-version = "0.0.1"
+version = "1.0.0.dev1"
 authors = [
   { name="José Parera", email="j3parera@gmail.com" },
 ]
