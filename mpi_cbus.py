@@ -1,5 +1,8 @@
-"""Python implementation of MERG CBUS Protocol.
+"""
+Python implementation of MERG CBUS Protocol.
+
 Current version comforms with CBUS Spec 6c.
+
 """
 import re
 import struct
