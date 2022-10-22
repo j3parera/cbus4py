@@ -61,41 +61,73 @@ class ErrorLocoStackFull(CommadStationError):
 
 
 class ErrorLocoAddressTaken(CommadStationError):
+    """
+    Loco Address Taken Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.LOCO_ADDRESS_TAKEN, "CS: Loco address taken")
 
 
 class ErrorSessionNotPresent(CommadStationError):
+    """
+    Session Not Present Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.SESSION_NOT_PRESENT, "CS: Session not present")
 
 
 class ErrorConsistEmpty(CommadStationError):
+    """
+    Consist Empty Error.
+
+    """
+
     def __init__(self) -> None:
         super().__init__(self.CONSIST_EMPTY, "CS: Consist empty")
 
 
 class ErrorLocoNotFound(CommadStationError):
+    """
+    Loco Not Found Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.LOCO_NOT_FOUND, "CS: Loco not found")
 
 
 class ErrorCanBusError(CommadStationError):
+    """
+    CAN Bus Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.CAN_BUS_ERROR, "CS: CAN bus error")
 
 
 class ErrorInvalidRequest(CommadStationError):
+    """
+    Invalid Request Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.INVALID_REQUEST, "CS: Invalid request")
 
 
 class ErrorSessionCancelled(CommadStationError):
+    """
+    Session Cancelled Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.SESSION_CANCELLED, "CS: Session cancelled")
 
 
 class ConfigError(CBusError):
+    """
+    Configuration Error.
+    """
 
     COMMAND_NOT_SUPPORTED = 1
     NOT_IN_LEARN_MODE = 2
@@ -718,6 +750,14 @@ class Frame:
         return frames
 
     def __init__(self, header: Header, msg: Optional[Message], rtr: bool = False) -> None:
+        """
+        Initializes a frame.
+
+        Args:
+            header (Header): the frame header.
+            msg (Optional[Message]): the CBus message.
+            rtr (bool, optional): True if the frame is of RTR type. Defaults to False.
+        """
         self._header: Header = header
         self._message: Optional[Message] = msg
         self._rtr = rtr
@@ -732,22 +772,37 @@ class Frame:
 
     @property
     def is_rtr(self) -> bool:
+        """
+        Check if frame is of type RTR.
+        """
         return self._rtr
 
     @property
     def is_normal(self) -> bool:
+        """
+        Check if frame is normal (not RTR).
+        """
         return not self.is_rtr
 
     @property
     def message(self) -> Optional[Message]:
+        """
+        The frame message if any.
+        """
         return self._message
 
     @property
     def header(self) -> Header:
+        """
+        The frame header.
+        """
         return self._header
 
     @property
     def net_encoded_frame(self) -> bytes:
+        """
+        The frame encoded for TCP.
+        """
         typ = "N" if self.is_normal else "R"
         msg = self.message.ascii if self.message is not None else ""
         return f":S{self._header.ascii_header.decode('ascii').upper()}{typ}{msg};".encode("ascii")

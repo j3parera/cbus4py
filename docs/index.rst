@@ -1,9 +1,9 @@
 .. include:: ../README.rst
 
-Welcome to MPI_CBUS documentation!
+Welcome to CBUS4PY documentation!
 ===================================
 
-**MPI_CBUS** is a Python library that implements the MERG CBUS Protocol as specified in 
+**CBUS4PY** is a Python library that implements the MERG CBUS Protocol as specified in 
 `CBUS-6b <https://www.merg.org.uk/merg_wiki/lib/exe/fetch.php?media=public:cbuspublic:developer_6b.pdf>`_.
 
 Check out the :doc:`usage` section for further information, including

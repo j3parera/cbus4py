@@ -6,7 +6,7 @@ Usage
 Installation
 ------------
 
-To use mpi_cbus, first install it using pip:
+To use cbus4py, first install it using pip:
 
 .. code-block:: console
 
