@@ -1,8 +1,5 @@
 .. include:: ../README.rst
 
-Welcome to CBUS4PY documentation!
-===================================
-
 **CBUS4PY** is a Python library that implements the MERG CBUS Protocol as specified in 
 `CBUS-6b <https://www.merg.org.uk/merg_wiki/lib/exe/fetch.php?media=public:cbuspublic:developer_6b.pdf>`_.
 
@@ -13,11 +10,28 @@ how to :ref:`installation` the software.
 
    This project is under active development.
 
-Contents
---------
+Home
+----
 
 .. toctree::
-
+   :hidden:
+   :caption: Home
+   
    Home <self>
-   usage
-   api
+
+Usage
+-----
+.. toctree::
+   :hidden:
+   :caption: Usage
+
+   /usage
+
+
+API
+---
+.. toctree::
+   :hidden:
+   :caption: API
+
+   /api

@@ -28,10 +28,6 @@ author = "José Parera"
 # -- General configuration
 
 extensions = [
-    "sphinx.ext.duration",
-    "sphinx.ext.doctest",
-    "sphinx.ext.autodoc",
-    "sphinx.ext.autosummary",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
 ]
@@ -70,6 +66,5 @@ autosummary_generate = True  # Turn on sphinx.ext.autosummary
 autodoc_default_options = {
     "members": True,
     "member-order": "groupwise",
-    "special-members": "__init__",
     "undoc-members": True,
 }

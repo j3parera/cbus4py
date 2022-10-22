@@ -1,8 +1,6 @@
 API
 ===
 
-.. autosummary::
-   :toctree: generated
+.. automodule:: cbus4py
 
-   cbus4py
    
