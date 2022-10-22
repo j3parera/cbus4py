@@ -1,7 +1,7 @@
-﻿mpi\_cbus
-=========
+﻿cbus4py
+=======
 
-.. automodule:: mpi_cbus
+.. automodule:: cbus4py
 
    
    

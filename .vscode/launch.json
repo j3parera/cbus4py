@@ -8,9 +8,9 @@
             "name": "CBUS Server",
             "type": "python",
             "request": "launch",
-            "module": "mpi_cbus_server",
+            "module": "cbus4py_server",
             "justMyCode": false,
-            "cwd": "${workspaceFolder}/mpi_cbus",
+            "cwd": "${workspaceFolder}/cbus4py",
             "env": {
                 "PYTHONPATH": "${cwd}"
             }

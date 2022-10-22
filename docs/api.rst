@@ -4,5 +4,5 @@ API
 .. autosummary::
    :toctree: generated
 
-   mpi_cbus
+   cbus4py
    

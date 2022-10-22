@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath(".."))
 
 # -- Project information -----------------------------------------------------
 
-project = "MPI_CBUS"
+project = "cbus4py"
 copyright = "2022, José Parera"
 author = "José Parera"
 
