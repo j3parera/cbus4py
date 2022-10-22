@@ -34,26 +34,26 @@
    .. autosummary::
    
       CBusError
+      CanBusError
       CommadStationError
+      CommandNotSupportedError
       ConfigError
-      ErrorCanBusError
-      ErrorCommandNotSupported
-      ErrorConsistEmpty
-      ErrorInvalidEvent
-      ErrorInvalidEventVariableIndex
-      ErrorInvalidEventVariableValue
-      ErrorInvalidNodeVariableIndex
-      ErrorInvalidNodeVariableValue
-      ErrorInvalidParameterIndex
-      ErrorInvalidRequest
-      ErrorLocoAddressTaken
-      ErrorLocoNotFound
-      ErrorLocoStackFull
-      ErrorNotInLearnMode
-      ErrorNotInSetupMode
-      ErrorSessionCancelled
-      ErrorSessionNotPresent
-      ErrorTooManyEvents
+      ConsistEmptyError
+      InvalidEventError
+      InvalidEventVariableIndexError
+      InvalidEventVariableValueError
+      InvalidNodeVariableIndexError
+      InvalidNodeVariableValueError
+      InvalidParameterIndexError
+      InvalidRequestError
+      LocoAddressTakenError
+      LocoNotFoundError
+      LocoStackFullError
+      NotInLearnModeError
+      NotInSetupModeError
+      SessionCancelledError
+      SessionNotPresentError
+      TooManyEventsError
    
    
 

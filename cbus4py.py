@@ -10,23 +10,15 @@ from enum import Enum, unique
 from typing import Optional, Type
 
 
+__version__ = "1.0.0.dev1"
+
+
 class CBusError(Exception):
     """
     Generic CBUS Error.
-
-    Attributes:
-        _code (int): Exception error code.
-
     """
 
     def __init__(self, code: int, msg: str) -> None:
-        """
-        Instance initialization.
-
-        Args:
-            code (int): Exception error code.
-            msg (str): Human readable string describing the exception.
-        """
         super().__init__(msg)
         self._code = code
 
@@ -51,16 +43,19 @@ class CommadStationError(CBusError):
     SESSION_CANCELLED = 8
 
 
-class ErrorLocoStackFull(CommadStationError):
+class LocoStackFullError(CommadStationError):
     """
     Loco Stack Full Error.
+
+    Args:
+        CommadStationError (_type_): _description_
     """
 
     def __init__(self) -> None:
         super().__init__(self.LOCO_STACK_FULL, "CS: Loco stack full")
 
 
-class ErrorLocoAddressTaken(CommadStationError):
+class LocoAddressTakenError(CommadStationError):
     """
     Loco Address Taken Error.
     """
@@ -69,7 +64,7 @@ class ErrorLocoAddressTaken(CommadStationError):
         super().__init__(self.LOCO_ADDRESS_TAKEN, "CS: Loco address taken")
 
 
-class ErrorSessionNotPresent(CommadStationError):
+class SessionNotPresentError(CommadStationError):
     """
     Session Not Present Error.
     """
@@ -78,7 +73,7 @@ class ErrorSessionNotPresent(CommadStationError):
         super().__init__(self.SESSION_NOT_PRESENT, "CS: Session not present")
 
 
-class ErrorConsistEmpty(CommadStationError):
+class ConsistEmptyError(CommadStationError):
     """
     Consist Empty Error.
 
@@ -88,7 +83,7 @@ class ErrorConsistEmpty(CommadStationError):
         super().__init__(self.CONSIST_EMPTY, "CS: Consist empty")
 
 
-class ErrorLocoNotFound(CommadStationError):
+class LocoNotFoundError(CommadStationError):
     """
     Loco Not Found Error.
     """
@@ -97,7 +92,7 @@ class ErrorLocoNotFound(CommadStationError):
         super().__init__(self.LOCO_NOT_FOUND, "CS: Loco not found")
 
 
-class ErrorCanBusError(CommadStationError):
+class CanBusError(CommadStationError):
     """
     CAN Bus Error.
     """
@@ -106,7 +101,7 @@ class ErrorCanBusError(CommadStationError):
         super().__init__(self.CAN_BUS_ERROR, "CS: CAN bus error")
 
 
-class ErrorInvalidRequest(CommadStationError):
+class InvalidRequestError(CommadStationError):
     """
     Invalid Request Error.
     """
@@ -115,7 +110,7 @@ class ErrorInvalidRequest(CommadStationError):
         super().__init__(self.INVALID_REQUEST, "CS: Invalid request")
 
 
-class ErrorSessionCancelled(CommadStationError):
+class SessionCancelledError(CommadStationError):
     """
     Session Cancelled Error.
     """
@@ -141,52 +136,95 @@ class ConfigError(CBusError):
     INVALID_NODE_VARIABLE_VALUE = 12
 
 
-class ErrorCommandNotSupported(ConfigError):
+class CommandNotSupportedError(ConfigError):
+    """
+    Command Not Supported Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.COMMAND_NOT_SUPPORTED, "CBUS: Command not supported")
 
 
-class ErrorNotInLearnMode(ConfigError):
+class NotInLearnModeError(ConfigError):
+    """
+    Not In Learn Mode Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.NOT_IN_LEARN_MODE, "CBUS: Not in learn mode")
 
 
-class ErrorNotInSetupMode(ConfigError):
+class NotInSetupModeError(ConfigError):
+    """
+    Not In Setup Mode Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.NOT_IN_SETUP_MODE, "CBUS: Not in setup mode")
 
 
-class ErrorTooManyEvents(ConfigError):
+class TooManyEventsError(ConfigError):
+    """
+    Too Many Events Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.TOO_MANY_EVENTS, "CBUS: Too many events")
 
 
-class ErrorInvalidEvent(ConfigError):
+class InvalidEventError(ConfigError):
+    """
+    Invalid Event Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.INVALID_EVENT, "CBUS: Invalid event")
 
 
-class ErrorInvalidEventVariableIndex(ConfigError):
+class InvalidEventVariableIndexError(ConfigError):
+    """
+    Invalid Event Variable Index Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.INVALID_EVENT_VARIABLE_INDEX, "CBUS: Invalid event variable index")
 
 
-class ErrorInvalidEventVariableValue(ConfigError):
+class InvalidEventVariableValueError(ConfigError):
+    """
+    Invalid Event Variable Value Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.INVALID_EVENT_VARIABLE_VALUE, "CBUS: Invalid event variable value")
 
 
-class ErrorInvalidNodeVariableIndex(ConfigError):
+class InvalidNodeVariableIndexError(ConfigError):
+    """
+    Invalid Node Variable Index Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.INVALID_NODE_VARIABLE_INDEX, "CBUS: Invalid node variable index")
 
 
-class ErrorInvalidNodeVariableValue(ConfigError):
+class InvalidNodeVariableValueError(ConfigError):
+    """
+    Invalid Node Variable Value Error.
+    """
+
     def __init__(self) -> None:
         super().__init__(self.INVALID_NODE_VARIABLE_VALUE, "CBUS: Invalid node variable value")
 
 
-class ErrorInvalidParameterIndex(ConfigError):
+class InvalidParameterIndexError(ConfigError):
+    """
+    Invalid Parameter Index Error.
+
+    Args:
+        ConfigError (_type_): _description_
+    """
+
     def __init__(self) -> None:
         super().__init__(self.INVALID_PARAMETER_INDEX, "CBUS: Invalid parameter index")
 
