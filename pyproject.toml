@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Topic :: System :: Hardware :: Controller Area Network (CAN)"
+    # "Topic :: System :: Hardware :: Controller Area Network (CAN)"
 ]
 
 [project.urls]

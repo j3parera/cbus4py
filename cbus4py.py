@@ -211,41 +211,47 @@ class InvalidParameterIndexError(ConfigError):
 
 
 class MajorPriority(Enum):
-    # bits 10-9 of CAN Header
+    """Major priority of a CAN frame. Occuppies bits 10 and 9 of the CAN frame."""
+
+    #: Emergency priority (highest).
     EMERGENCY = 0
+    #: High priority.
     HIGH = 1
+    #: Normal priority (lowest).
     NORMAL = 2
 
 
 class MinorPriority(Enum):
-    # bits 8-7 of CAN Header
+    """Minor priority of a CAN frame. Occuppies bits 8 and 7 of the CAN frame."""
+
+    #: High pripority (highest).
     HIGH = 0
+    #: Above normal priority.
     ABOVE_NORMAL = 1
+    #: Normal priority.
     NORMAL = 2
+    #: Low priority (lowest).
     LOW = 3
 
 
 class Header:
     """
-    _summary_
+    The header of a CAN frame.
 
     Raises:
-        ValueError: _description_
-
-    Returns:
-        _type_: _description_
+        ValueError: if the specified value of the `can_id` is above 127.
     """
 
     @classmethod
     def from_bytes(cls: Type["Header"], data: bytes) -> "Header":
         """
-        Constructs a CBus message header from at least two bytes of data.
+        Constructs a CAN header from at least two bytes of data.
 
         Args:
             data (bytes): bytes object containing the header.
 
         Returns:
-            Header: the CBus message header contained in data.
+            Header: the CAN header contained in data.
         """
         sidh = data[0]
         sidl = data[1]
@@ -254,21 +260,18 @@ class Header:
         can_id = (sidh & 0x0F) << 3 | ((sidl >> 5) & 0x07)
         return cls(maj_prio, min_prio, can_id)
 
-    @classmethod
-    def make_minor_priority(cls: Type["Header"], min_prio: MinorPriority, can_id: int) -> "Header":
+    def __init__(self, maj_prio: MajorPriority, min_prio: MinorPriority, can_id: int) -> None:
         """
-        _summary_
+        CAN header constructor.
 
         Args:
-            min_prio (MinorPriority): _description_
-            can_id (int): _description_
+            maj_prio (MajorPriority): major priority.
+            min_prio (MinorPriority): minor priority.
+            can_id (int): CAN identifier.
 
-        Returns:
-            Header: _description_
+        Raises:
+            ValueError: if the specified value of the CAN identifier is above 127.
         """
-        return cls(MajorPriority.NORMAL, min_prio, can_id)
-
-    def __init__(self, maj_prio: MajorPriority, min_prio: MinorPriority, can_id: int) -> None:
         if can_id > 127:
             raise ValueError("CBUS: CAN ID must be <= 127.")
         self._major_prio: MajorPriority = maj_prio
@@ -289,34 +292,46 @@ class Header:
 
     @property
     def major_priority(self) -> MajorPriority:
+        """The major priority of the CAN header."""
         return self._major_prio
+
+    @major_priority.setter
+    def major_priority(self, value: MajorPriority) -> None:
+        self._major_prio = value
 
     @property
     def minor_priority(self) -> MinorPriority:
+        """The minor priority of the CAN header."""
         return self._minor_prio
 
     @property
     def can_id(self) -> int:
+        """The CAN identifier of the CAN header."""
         return self._can_id
 
     @property
     def sidl(self) -> int:
+        """The lower register byte of the CAN header."""
         return self._sidl
 
     @property
     def sidh(self) -> int:
+        """The upper register byte of the CAN header."""
         return self._sidh
 
     @property
-    def header(self) -> bytes:
+    def reg_header(self) -> bytes:
+        """The CAN header as a `bytes` object with raw data for writing into SIDL and SIDL registers."""
         return bytes([self._sidh, self._sidl])
 
     @property
     def ascii_header(self) -> bytes:
-        return bytes(self.header.hex(), "ascii")
+        """The CAN header as a `bytes` object with ascii-encoded data."""
+        return bytes(self.reg_header.hex(), "ascii")
 
     @property
     def can_header(self) -> bytes:
+        """The CAN header as a `bytes` object with raw data."""
         return bytes([self._sidh >> 5, ((self._sidh & 0x1F) << 3) | ((self._sidl >> 5) & 0x07)])
 
     def _make_header(self) -> None:
@@ -324,6 +339,9 @@ class Header:
         self._sidh |= self._minor_prio.value << 4
         self._sidh |= self._can_id >> 3
         self._sidl = (self._can_id & 0x7) << 5
+
+
+# ----- CBUS Message ---------------------------------------------------------------------------------------------------
 
 
 class OpCodeKind(Enum):
@@ -349,8 +367,9 @@ class OpCode(bytes, Enum):
     def minor_priority(self) -> MinorPriority:
         return self._minor_prio
 
-    # GENERAL
-    ACK = (0x00, MinorPriority.NORMAL, OpCodeKind.GENERAL)  # General acknowledgement - affirmative
+    # ---- GENERAL Opcodes
+    #: General acknowledgement - affirmative.
+    ACK = (0x00, MinorPriority.NORMAL, OpCodeKind.GENERAL)
     NAK = (0x01, MinorPriority.NORMAL, OpCodeKind.GENERAL)  # General acknowledgement - negative
     HLT = (0x02, MinorPriority.HIGH, OpCodeKind.GENERAL)  # CAN bus not available / busy
     BON = (0x03, MinorPriority.ABOVE_NORMAL, OpCodeKind.GENERAL)  # CAN bus available
@@ -665,7 +684,7 @@ class Frame:
 
     @classmethod
     def make_emergency_stop(cls: Type["Frame"], can_id: int) -> "Frame":
-        return cls(Header.make_minor_priority(OpCode.ESTOP.minor_priority, can_id), Message.make_emergency_stop())
+        return cls(Header(MajorPriority.NORMAL, OpCode.ESTOP.minor_priority, can_id), Message.make_emergency_stop())
 
     @classmethod
     def make_engine_report(
@@ -680,14 +699,14 @@ class Frame:
         if fns is None:
             fns = [0, 0, 0]
         return cls(
-            Header.make_minor_priority(OpCode.PLOC.minor_priority, can_id),
+            Header(MajorPriority.NORMAL, OpCode.PLOC.minor_priority, can_id),
             Message.make_engine_report(session, loco_address, speed, direction, fns),
         )
 
     @classmethod
     def make_command_station_error(cls: Type["Frame"], can_id: int, loco_address: int, error_code: int) -> "Frame":
         return cls(
-            Header.make_minor_priority(OpCode.ERR.minor_priority, can_id),
+            Header(MajorPriority.NORMAL, OpCode.ERR.minor_priority, can_id),
             Message.make_command_station_error(loco_address, error_code),
         )
 
@@ -703,7 +722,7 @@ class Frame:
         build: int = 0,
     ) -> "Frame":
         return cls(
-            Header.make_minor_priority(OpCode.STAT.minor_priority, can_id),
+            Header(MajorPriority.NORMAL, OpCode.STAT.minor_priority, can_id),
             Message.make_command_station_report(node_number, cs_number, flags, rev_major, rev_minor, build),
         )
 
@@ -712,18 +731,18 @@ class Frame:
         cls: Type["Frame"], can_id: int, node_number: int, manufacturer_id: int, module_id: int, flags: int
     ) -> "Frame":
         return cls(
-            Header.make_minor_priority(OpCode.PNN.minor_priority, can_id),
+            Header(MajorPriority.NORMAL, OpCode.PNN.minor_priority, can_id),
             Message.make_query_node_response(node_number, manufacturer_id, module_id, flags),
         )
 
     @classmethod
     def make_node_params(cls: Type["Frame"], can_id: int, params: list[int]) -> "Frame":
-        return cls(Header.make_minor_priority(OpCode.PARAMS.minor_priority, can_id), Message.make_node_params(params))
+        return cls(Header(MajorPriority.NORMAL, OpCode.PARAMS.minor_priority, can_id), Message.make_node_params(params))
 
     @classmethod
     def make_node_number_ack(cls: Type["Frame"], can_id: int, node_number: int) -> "Frame":
         return cls(
-            Header.make_minor_priority(OpCode.NNACK.minor_priority, can_id), Message.make_node_number_ack(node_number)
+            Header(MajorPriority.NORMAL, OpCode.NNACK.minor_priority, can_id), Message.make_node_number_ack(node_number)
         )
 
     @classmethod
@@ -731,36 +750,38 @@ class Frame:
         cls: Type["Frame"], can_id: int, node_number: int, param_number: int, param_value: int
     ) -> "Frame":
         return cls(
-            Header.make_minor_priority(OpCode.PARAN.minor_priority, can_id),
+            Header(MajorPriority.NORMAL, OpCode.PARAN.minor_priority, can_id),
             Message.make_parameter(node_number, param_number, param_value),
         )
 
     @classmethod
     def make_read_node_var(cls: Type["Frame"], can_id: int, node_number: int, nv_number: int, nv_value: int) -> "Frame":
         return cls(
-            Header.make_minor_priority(OpCode.NVANS.minor_priority, can_id),
+            Header(MajorPriority.NORMAL, OpCode.NVANS.minor_priority, can_id),
             Message.make_read_node_var(node_number, nv_number, nv_value),
         )
 
     @classmethod
     def make_config_error(cls: Type["Frame"], can_id: int, node_number: int, error_code: int) -> "Frame":
         return cls(
-            Header.make_minor_priority(OpCode.CMDERR.minor_priority, can_id),
+            Header(MajorPriority.NORMAL, OpCode.CMDERR.minor_priority, can_id),
             Message.make_config_error(node_number, error_code),
         )
 
     @classmethod
     def make_module_name(cls: Type["Frame"], can_id: int, name: str) -> "Frame":
-        return cls(Header.make_minor_priority(OpCode.NAME.minor_priority, can_id), Message.make_module_name(name))
+        return cls(Header(MajorPriority.NORMAL, OpCode.NAME.minor_priority, can_id), Message.make_module_name(name))
 
     @classmethod
     def make_write_ack(cls: Type["Frame"], can_id: int, node_number: int) -> "Frame":
-        return cls(Header.make_minor_priority(OpCode.WRACK.minor_priority, can_id), Message.make_write_ack(node_number))
+        return cls(
+            Header(MajorPriority.NORMAL, OpCode.WRACK.minor_priority, can_id), Message.make_write_ack(node_number)
+        )
 
     @classmethod
     def make_stored_event_num(cls: Type["Frame"], can_id: int, node_number: int, ev_num: int) -> "Frame":
         return cls(
-            Header.make_minor_priority(OpCode.NUMEV.minor_priority, can_id),
+            Header(MajorPriority.NORMAL, OpCode.NUMEV.minor_priority, can_id),
             Message.make_stored_event_num(node_number, ev_num),
         )
 
