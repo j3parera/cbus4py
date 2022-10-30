@@ -12,3 +12,13 @@ To use cbus4py, first install it using pip:
 
    (.venv) $ pip install -e .
 
+.. _concepts:
+
+Concepts
+--------
+
+cbus4py defines three main classes:
+
+#. Header
+#. Message
+#. Frame
