@@ -10,9 +10,10 @@ import re
 import struct
 from enum import Enum, unique
 from typing import Optional, Type
+from pkg_resources import get_distribution as _get_distribution
 
-
-__version__ = "1.0.0.dev1"
+#: module version
+__version__ = _get_distribution("cbus4py").version
 
 
 # ----- Exceptions -----------------------------------------------------------------------------------------------------
@@ -298,6 +299,7 @@ class Header:
     @major_priority.setter
     def major_priority(self, value: MajorPriority) -> None:
         self._major_prio = value
+        self._make_header()
 
     @property
     def minor_priority(self) -> MinorPriority:
@@ -321,7 +323,13 @@ class Header:
 
     @property
     def reg_header(self) -> bytes:
-        """The CAN header as a `bytes` object with raw data for writing into SIDL and SIDL registers."""
+        """
+        The CAN header for SIDH and SIDL registers.
+
+        Returns a ytes`object with the raw header data for writing into SIDH and SIDL
+        registers of microprocessors like PIC 18Fxx8x series.
+        Data is left aligned and padded with 5 zeros to the right.
+        """
         return bytes([self._sidh, self._sidl])
 
     @property
@@ -523,7 +531,7 @@ class OpCode(bytes, Enum):
 
 class Message:
     @classmethod
-    def parse(cls: Type["Message"], data: bytes) -> "Message":
+    def from_bytes(cls: Type["Message"], data: bytes) -> "Message":
         try:
             opcode = OpCode(data[0])
         except IndexError as exc:
@@ -790,12 +798,12 @@ class Frame:
         return cls(Header(MajorPriority.NORMAL, MinorPriority.LOW, can_id), None)
 
     @classmethod
-    def parse_from_network(cls: Type["Frame"], data: bytes) -> list["Frame"]:
+    def from_network_bytes(cls: Type["Frame"], data: bytes) -> list["Frame"]:
         frames_spec = cls.format.findall(data)
         frames = list()
         for frame in frames_spec:
             header = Header.from_bytes(bytes.fromhex(frame[0].decode("ascii")))
-            msg = Message.parse(bytes.fromhex(frame[2].decode("ascii")))
+            msg = Message.from_bytes(bytes.fromhex(frame[2].decode("ascii")))
             frames.append(cls(header, msg, rtr=(frame[1] == "R")))
         return frames
 
