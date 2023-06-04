@@ -22,7 +22,7 @@ __version__ = _get_distribution("cbus4py").version
 class CBusError(Exception):
     """
     Generic CBUS Error.
-    All CBUS errors have a integer code that can be accessed using the `code` property of the exception.
+    All CBUS errors have a integer code that can be accessed using the :obj:`code` property of the exception.
 
     """
 
@@ -240,13 +240,13 @@ class Header:
     The header of a CAN frame.
 
     Raises:
-        ValueError: if the specified value of the `can_id` is above 127.
+        ValueError: if the specified value of the :obj:`can_id` is above 127.
     """
 
     @classmethod
     def from_bytes(cls: Type["Header"], data: bytes) -> "Header":
         """
-        Constructs a CAN header from at least two bytes of data.
+        Factory method that constructs a CAN header from at least two bytes of data.
 
         Args:
             data (bytes): bytes object containing the header.
@@ -263,7 +263,7 @@ class Header:
 
     def __init__(self, maj_prio: MajorPriority, min_prio: MinorPriority, can_id: int) -> None:
         """
-        CAN header constructor.
+        CAN header instance initialization.
 
         Args:
             maj_prio (MajorPriority): major priority.
