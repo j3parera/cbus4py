@@ -3,6 +3,10 @@ from unittest import TestCase, main
 
 import cbus4py as cbus
 
+# TODO: Tests de excepciones,
+
+# TODO: Más tests (de factorías, por ejemplo)
+
 
 class TestHeader(TestCase):
     """Tests of CBUS :obj:Header class."""
