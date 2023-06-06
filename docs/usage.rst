@@ -10,7 +10,7 @@ To use cbus4py, first install it using pip:
 
 .. code-block:: console
 
-   (.venv) $ pip install -e .
+   (.venv) $ pip install -e . --config-settings editable_mode=strict
 
 .. _concepts:
 

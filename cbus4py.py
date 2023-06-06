@@ -8,7 +8,7 @@ Attributes:
 """
 import re
 import struct
-from enum import Enum, unique
+from enum import Enum, IntFlag, unique
 from typing import Optional, Type
 from pkg_resources import get_distribution as _get_distribution
 
@@ -208,6 +208,50 @@ class InvalidParameterIndexError(ConfigError):
         super().__init__("CFG: Invalid parameter index.", self.INVALID_PARAMETER_INDEX)
 
 
+# ----- Node Flags -----------------------------------------------------------------------------------------------------
+
+
+class NodeFlags(IntFlag):
+    """Node bit flags for status."""
+
+    #: Node is event consumer
+    BIT_CONSUMER = 0
+    #: Node is event producer
+    BIT_PRODUCER = 1
+    #: Node is in FLiM mode
+    BIT_FLIM_MODE = 2
+    #: Node supports boot loading
+    BIT_BOOT_SUPPORTED = 3
+    #: Node consumes own events
+    BIT_AUTOCONSUME = 4
+    #: Node is in learn mode
+    BIT_LEARN_MODE = 5
+
+
+# ----- Command Station status -----------------------------------------------------------------------------------------
+
+
+class CommandStationFlags(IntFlag):
+    """Command Station bit flags for status."""
+
+    #: Self test dectected hardware error
+    BIT_HW_ERROR = 0
+    #: Track error
+    BIT_TRACK_ERROR = 1
+    #: Track power
+    BIT_TRACK_POWER = 2
+    #: Bus power
+    BIT_BUS_POWER = 3
+    #: Emergency stopped
+    BIT_EMERGENCY_STOP = 4
+    #: Reset done
+    BIT_RESET_DONE = 5
+    #: Service mode
+    BIT_SERVICE_MODE = 6
+    #: Reserved
+    BIT_RESERVED = 7
+
+
 # ----- CAN Header -----------------------------------------------------------------------------------------------------
 
 
@@ -378,24 +422,18 @@ class OpCode(bytes, Enum):
     # ---- GENERAL Opcodes
     #: General acknowledgement - affirmative.
     ACK = (0x00, MinorPriority.NORMAL, OpCodeKind.GENERAL)
-    NAK = (
-        0x01,
-        MinorPriority.NORMAL,
-        OpCodeKind.GENERAL,
-    )  # General acknowledgement - negative
-    HLT = (0x02, MinorPriority.HIGH, OpCodeKind.GENERAL)  # CAN bus not available / busy
-    BON = (0x03, MinorPriority.ABOVE_NORMAL, OpCodeKind.GENERAL)  # CAN bus available
-    ARST = (0x07, MinorPriority.HIGH, OpCodeKind.GENERAL)  # System reset
-    DBG1 = (
-        0x30,
-        MinorPriority.NORMAL,
-        OpCodeKind.GENERAL,
-    )  # Debug. For development only
-    EXTC = (
-        0x3F,
-        MinorPriority.LOW,
-        OpCodeKind.GENERAL,
-    )  # Extended OPC with no added bytes
+    #: General acknowledgement - negative
+    NAK = (0x01, MinorPriority.NORMAL, OpCodeKind.GENERAL)
+    #: CAN bus not available / busy
+    HLT = (0x02, MinorPriority.HIGH, OpCodeKind.GENERAL)
+    #: CAN bus available
+    BON = (0x03, MinorPriority.ABOVE_NORMAL, OpCodeKind.GENERAL)
+    #: System reset
+    ARST = (0x07, MinorPriority.HIGH, OpCodeKind.GENERAL)
+    #: Debug. For development only
+    DBG1 = (0x30, MinorPriority.NORMAL, OpCodeKind.GENERAL)
+    #: Extended OPC with no added bytes
+    EXTC = (0x3F, MinorPriority.LOW, OpCodeKind.GENERAL)
     EXTC1 = (
         0x5F,
         MinorPriority.LOW,
@@ -941,6 +979,23 @@ class Message:
         return cls(OpCode.NUMEV, struct.pack("!HB", node_number, ev_num))
 
     @classmethod
+    def make_event_read_resp(cls: Type["Message"], node_number: int, ev_nn: int, ev_num: int, ev_idx: int) -> "Message":
+        return cls(OpCode.ENRSP, struct.pack("!HHHB", node_number, ev_nn, ev_num, ev_idx))
+
+    @classmethod
+    def make_event_value_read_resp(
+        cls: Type["Message"],
+        node_number: int,
+        ev_idx: int,
+        ev_var_idx: int,
+        ev_var_val: int,
+    ) -> "Message":
+        return cls(
+            OpCode.NEVAL,
+            struct.pack("!HBBB", node_number, ev_idx, ev_var_idx, ev_var_val),
+        )
+
+    @classmethod
     def make_emergency_stop(cls: Type["Message"]) -> "Message":
         return cls(OpCode.ESTOP)
 
@@ -1123,6 +1178,34 @@ class Frame:
         )
 
     @classmethod
+    def make_event_read_resp(
+        cls: Type["Frame"],
+        can_id: int,
+        node_number: int,
+        ev_nn: int,
+        ev_num: int,
+        ev_idx,
+    ) -> "Frame":
+        return cls(
+            Header(MajorPriority.NORMAL, OpCode.NUMEV.minor_priority, can_id),
+            Message.make_event_read_resp(node_number, ev_nn, ev_num, ev_idx),
+        )
+
+    @classmethod
+    def make_event_value_read_resp(
+        cls: Type["Frame"],
+        can_id: int,
+        node_number: int,
+        ev_idx: int,
+        ev_var_idx: int,
+        ev_var_val,
+    ) -> "Frame":
+        return cls(
+            Header(MajorPriority.NORMAL, OpCode.NUMEV.minor_priority, can_id),
+            Message.make_event_value_read_resp(node_number, ev_idx, ev_var_idx, ev_var_val),
+        )
+
+    @classmethod
     def make_void(cls: Type["Frame"], can_id: int) -> "Frame":
         return cls(Header(MajorPriority.NORMAL, MinorPriority.LOW, can_id), None, rtr=True)
 
@@ -1133,7 +1216,7 @@ class Frame:
         for frame in frames_spec:
             header = Header.from_bytes(bytes.fromhex(frame[0].decode("ascii")))
             msg = Message.from_bytes(bytes.fromhex(frame[2].decode("ascii")))
-            frames.append(cls(header, msg, rtr=(frame[1] == "R")))
+            frames.append(cls(header, msg, rtr=frame[1] == "R"))
         return frames
 
     def __init__(self, header: Header, msg: Optional[Message], rtr: bool = False) -> None:
