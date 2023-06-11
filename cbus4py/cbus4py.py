@@ -17,8 +17,6 @@ __version__ = _get_distribution("cbus4py").version
 
 
 # ----- Exceptions -----------------------------------------------------------------------------------------------------
-
-
 class CBusError(Exception):
     """
     Generic CBUS Error.
@@ -209,8 +207,6 @@ class InvalidParameterIndexError(ConfigError):
 
 
 # ----- Node Flags -----------------------------------------------------------------------------------------------------
-
-
 class NodeFlags(IntFlag):
     """Node bit flags for status."""
 
@@ -229,8 +225,6 @@ class NodeFlags(IntFlag):
 
 
 # ----- Command Station status -----------------------------------------------------------------------------------------
-
-
 class CommandStationFlags(IntFlag):
     """Command Station bit flags for status."""
 
@@ -253,8 +247,6 @@ class CommandStationFlags(IntFlag):
 
 
 # ----- CAN Header -----------------------------------------------------------------------------------------------------
-
-
 class MajorPriority(Enum):
     """Major priority of a CAN frame. Occuppies bits 10 and 9 of the CAN frame."""
 
@@ -394,12 +386,10 @@ class Header:
 
 
 # ----- CBUS Message ---------------------------------------------------------------------------------------------------
-
-
 class OpCodeKind(Enum):
     GENERAL = 0
     CONFIG = 1
-    ACCESORY = 2
+    ACCESSORY = 2
     DCC = 3
 
 
@@ -434,354 +424,182 @@ class OpCode(bytes, Enum):
     DBG1 = (0x30, MinorPriority.NORMAL, OpCodeKind.GENERAL)
     #: Extended OPC with no added bytes
     EXTC = (0x3F, MinorPriority.LOW, OpCodeKind.GENERAL)
-    EXTC1 = (
-        0x5F,
-        MinorPriority.LOW,
-        OpCodeKind.GENERAL,
-    )  # Extended OPC with one added byte
-    EXTC2 = (
-        0x7F,
-        MinorPriority.LOW,
-        OpCodeKind.GENERAL,
-    )  # Extended OPC with two added bytes
-    EXTC3 = (
-        0x9F,
-        MinorPriority.LOW,
-        OpCodeKind.GENERAL,
-    )  # Extended OPC with three added bytes
-    EXTC4 = (
-        0xBF,
-        MinorPriority.LOW,
-        OpCodeKind.GENERAL,
-    )  # Extended OPC with four added bytes
-    EXTC5 = (
-        0xDF,
-        MinorPriority.LOW,
-        OpCodeKind.GENERAL,
-    )  # Extended OPC with five added bytes
-    EXTC6 = (
-        0xFF,
-        MinorPriority.LOW,
-        OpCodeKind.GENERAL,
-    )  # Extended OPC with six added bytes
-    # CONFIG
-    RSTAT = (
-        0x0C,
-        MinorPriority.NORMAL,
-        OpCodeKind.CONFIG,
-    )  # Query status of command station
-    QNN = (0x0D, MinorPriority.LOW, OpCodeKind.CONFIG)  # Query node status x
-    RQNP = (0x10, MinorPriority.LOW, OpCodeKind.CONFIG)  # Request node parameters x
-    RQMN = (0x11, MinorPriority.NORMAL, OpCodeKind.CONFIG)  # Request module name x
-    SNN = (
-        0x42,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Set node number (node in 'setup') x
-    RQNN = (0x50, MinorPriority.LOW, OpCodeKind.CONFIG)  # Request node number x
-    NNREL = (0x51, MinorPriority.LOW, OpCodeKind.CONFIG)  # Node number release x
-    NNACK = (
-        0x52,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Node number acknowledge (node in 'setup') x
-    NNLRN = (0x53, MinorPriority.LOW, OpCodeKind.CONFIG)  # Set node into learn mode x
-    NNULN = (
-        0x54,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Release node from learn mode x
-    NNCLR = (
-        0x55,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Clear all events from a node x
-    NNEVN = (
-        0x56,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Read number of events available x
-    NERD = (
-        0x57,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Read back all events in a node x
-    RQEVN = (
-        0x58,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Read number of stored events in node x
-    WRACK = (
-        0x59,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Write acknowledge. (Handshake) x
-    BOOTM = (
-        0x5C,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Put node into 'bootloader' mode
-    ENUM = (
-        0x5D,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Force self enumeration of CAN_ID
-    CMDERR = (
-        0x6F,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Error message during configuration x
-    EVNLF = (0x70, MinorPriority.LOW, OpCodeKind.CONFIG)  # Event space left x
-    NVRD = (
-        0x71,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Request read of node variable x
-    NENRD = (
-        0x72,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Request read of events by index x
-    RQNPN = (
-        0x73,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Request read of node parameter by index
-    NUMEV = (
-        0x74,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Number of events stored in node x
-    CANID = (0x75, MinorPriority.LOW, OpCodeKind.CONFIG)  # Force a specific CAN_ID
-    EVULN = (
-        0x95,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Unlearn an event in learn mode x
-    NVSET = (0x96, MinorPriority.LOW, OpCodeKind.CONFIG)  # Set a node variable x
-    NVANS = (0x97, MinorPriority.LOW, OpCodeKind.CONFIG)  # Node variable value response
-    PARAN = (0x9B, MinorPriority.LOW, OpCodeKind.CONFIG)  # Parameter readback by index
-    REVAL = (
-        0x9C,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Request read of event variable
-    REQEV = (
-        0xB2,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Read event variable in learn mode
-    NEVAL = (0xB5, MinorPriority.LOW, OpCodeKind.CONFIG)  # Read of EV value response
-    PNN = (0xB6, MinorPriority.LOW, OpCodeKind.CONFIG)  # Response to query node x
-    EVLRN = (0xD2, MinorPriority.LOW, OpCodeKind.CONFIG)  # Teach event in learn mode x
-    EVANS = (
-        0xD3,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Response to request for EV value in learn mode x
-    NAME = (
-        0xE2,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Response to request for node name x
-    PARAMS = (
-        0xEF,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Response to request for node parameters (in setup)
-    ENRSP = (
-        0xF2,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Response to request to read node events x
-    EVLRNI = (
-        0xF5,
-        MinorPriority.LOW,
-        OpCodeKind.CONFIG,
-    )  # Teach event in learn mode using event indexing x
-    # ACCESORY
-    RQDAT = (0x5A, MinorPriority.LOW, OpCodeKind.ACCESORY)  # Request node data event
-    RQDDS = (
-        0x5B,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Request device data (short)
-    ACON = (0x90, MinorPriority.LOW, OpCodeKind.ACCESORY)  # Accessory ON event (long)
-    ACOF = (0x91, MinorPriority.LOW, OpCodeKind.ACCESORY)  # Accessory OFFevent (long)
-    AREQ = (
-        0x92,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory status request (long)
-    ARON = (
-        0x93,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response ON (long)
-    AROF = (
-        0x94,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response OFF (long)
-    ASON = (0x98, MinorPriority.LOW, OpCodeKind.ACCESORY)  # Accessory ON event (short)
-    ASOF = (0x99, MinorPriority.LOW, OpCodeKind.ACCESORY)  # Accessory OFFevent (short)
-    ASRQ = (
-        0x9A,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory status request (short)
-    ARSON = (
-        0x9D,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response ON (short)
-    ARSOF = (
-        0x9E,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response OFF (short)
-    ACON1 = (
-        0xB0,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory ON event with one added byte (long)
-    ACOF1 = (
-        0xB1,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory OFF event with one added byte (long)
-    ARON1 = (
-        0xB3,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response event ON with one added byte (long)
-    AROF1 = (
-        0xB4,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response event OFF with one added byte (long)
-    ASON1 = (
-        0xB8,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory ON event with one added byte (short)
-    ASOF1 = (
-        0xB9,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory OFF event with one added byte (short)
-    ARSON1 = (
-        0xBD,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response ON with one added data byte (short)
-    ARSOF1 = (
-        0xBE,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response OFF with one added data byte (short)
-    FCLK = (0xCF, MinorPriority.LOW, OpCodeKind.ACCESORY)  # Fast clock
-    ACON2 = (
-        0xD0,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory ON event with two added bytes (long)
-    ACOF2 = (
-        0xD1,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory OFF event with two added bytes (long)
-    ARON2 = (
-        0xD4,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response event ON with two added bytes (long)
-    AROF2 = (
-        0xD5,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response event OFF with two added bytes (long)
-    ASON2 = (
-        0xD8,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory ON event with two added bytes (short)
-    ASOF2 = (
-        0xD9,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory OFF event with two added bytes (short)
-    ARSON2 = (
-        0xDD,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response ON with two added data bytes (short)
-    ARSOF2 = (
-        0xDE,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response OFF with two added data bytes (short)
-    ACON3 = (
-        0xF0,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory ON event with three added bytes (long)
-    ACOF3 = (
-        0xF1,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory OFF event with three added bytes (long)
-    ARON3 = (
-        0xF3,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response event ON with three added bytes (long)
-    AROF3 = (
-        0xF4,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response event OFF with three added bytes (long)
-    ACDAT = (
-        0xF6,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory node data event. 5 data bytes (long)
-    ARDAT = (
-        0xF7,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory node data response. 5 data bytes (long)
-    ASON3 = (
-        0xF8,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory ON event with three added bytes (short)
-    ASOF3 = (
-        0xF9,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory OFF event with three added bytes (short)
-    DDES = (
-        0xFA,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory node data event. 5 data bytes (short)
-    DDRS = (
-        0xFB,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory node data response. 5 data bytes (short)
-    ARSON3 = (
-        0xFD,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response ON with 3 added data bytes (short)
-    ARSOF3 = (
-        0xFE,
-        MinorPriority.LOW,
-        OpCodeKind.ACCESORY,
-    )  # Accessory response OFF with 3 added data bytes (short)
-    # DCC
+    #: Extended OPC with one added byte
+    EXTC1 = (0x5F, MinorPriority.LOW, OpCodeKind.GENERAL)
+    #: Extended OPC with two added bytes
+    EXTC2 = (0x7F, MinorPriority.LOW, OpCodeKind.GENERAL)
+    #: Extended OPC with three added bytes
+    EXTC3 = (0x9F, MinorPriority.LOW, OpCodeKind.GENERAL)
+    #: Extended OPC with four added bytes
+    EXTC4 = (0xBF, MinorPriority.LOW, OpCodeKind.GENERAL)
+    #: Extended OPC with five added bytes
+    EXTC5 = (0xDF, MinorPriority.LOW, OpCodeKind.GENERAL)
+    #: Extended OPC with six added bytes
+    EXTC6 = (0xFF, MinorPriority.LOW, OpCodeKind.GENERAL)
+
+    # ---- CONFIG Opcodes
+    #: Query status of command station
+    RSTAT = (0x0C, MinorPriority.NORMAL, OpCodeKind.CONFIG)
+    #: Query node status
+    QNN = (0x0D, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Request node parameters
+    RQNP = (0x10, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Request module name
+    RQMN = (0x11, MinorPriority.NORMAL, OpCodeKind.CONFIG)
+    #: Set node number (node in 'setup')
+    SNN = (0x42, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Request node number
+    RQNN = (0x50, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Node number release
+    NNREL = (0x51, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Node number acknowledge (node in 'setup')
+    NNACK = (0x52, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Set node into learn mode
+    NNLRN = (0x53, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Release node from learn mode
+    NNULN = (0x54, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Clear all events from a node
+    NNCLR = (0x55, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Read number of events available
+    NNEVN = (0x56, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Read back all events in a node
+    NERD = (0x57, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Read number of stored events in node
+    RQEVN = (0x58, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Write acknowledge. (Handshake)
+    WRACK = (0x59, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Put node into 'bootloader' mode
+    BOOTM = (0x5C, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Force self enumeration of CAN_ID
+    ENUM = (0x5D, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Error message during configuration
+    CMDERR = (0x6F, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Event space left
+    EVNLF = (0x70, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Request read of node variable
+    NVRD = (0x71, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Request read of events by index
+    NENRD = (0x72, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Request read of node parameter by index
+    RQNPN = (0x73, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Number of events stored in node
+    NUMEV = (0x74, MinorPriority.LOW, OpCodeKind.CONFIG)
+    # Force a specific CAN_ID
+    CANID = (0x75, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Unlearn an event in learn mode
+    EVULN = (0x95, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Set a node variable
+    NVSET = (0x96, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Node variable value response
+    NVANS = (0x97, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Parameter readback by index
+    PARAN = (0x9B, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Request read of event variable
+    REVAL = (0x9C, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Read event variable in learn mode
+    REQEV = (0xB2, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Read of EV value response
+    NEVAL = (0xB5, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Response to query node
+    PNN = (0xB6, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Teach event in learn mode
+    EVLRN = (0xD2, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Response to request for EV value in learn mode
+    EVANS = (0xD3, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Response to request for node name
+    NAME = (0xE2, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Response to request for node parameters (in setup)
+    PARAMS = (0xEF, MinorPriority.LOW, OpCodeKind.CONFIG)
+    #: Response to request to read node events
+    ENRSP = (0xF2, MinorPriority.LOW, OpCodeKind.CONFIG)
+    # Teach event in learn mode using event indexing
+    EVLRNI = (0xF5, MinorPriority.LOW, OpCodeKind.CONFIG)
+
+    # ---- ACCESORY Opcodes
+    #: Request node data event
+    RQDAT = (0x5A, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Request device data (short)
+    RQDDS = (0x5B, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory ON event (long)
+    ACON = (0x90, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory OFFevent (long)
+    ACOF = (0x91, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory status request (long)
+    AREQ = (0x92, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response ON (long)
+    ARON = (0x93, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response OFF (long)
+    AROF = (0x94, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory ON event (short)
+    ASON = (0x98, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory OFFevent (short)
+    ASOF = (0x99, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory status request (short)
+    ASRQ = (0x9A, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response ON (short)
+    ARSON = (0x9D, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response OFF (short)
+    ARSOF = (0x9E, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory ON event with one added byte (long)
+    ACON1 = (0xB0, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory OFF event with one added byte (long)
+    ACOF1 = (0xB1, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response event ON with one added byte (long)
+    ARON1 = (0xB3, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response event OFF with one added byte (long)
+    AROF1 = (0xB4, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory ON event with one added byte (short)
+    ASON1 = (0xB8, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory OFF event with one added byte (short)
+    ASOF1 = (0xB9, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response ON with one added data byte (short)
+    ARSON1 = (0xBD, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response OFF with one added data byte (short)
+    ARSOF1 = (0xBE, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Fast clock
+    FCLK = (0xCF, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory ON event with two added bytes (long)
+    ACON2 = (0xD0, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory OFF event with two added bytes (long)
+    ACOF2 = (0xD1, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response event ON with two added bytes (long)
+    ARON2 = (0xD4, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response event OFF with two added bytes (long)
+    AROF2 = (0xD5, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory ON event with two added bytes (short)
+    ASON2 = (0xD8, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory OFF event with two added bytes (short)
+    ASOF2 = (0xD9, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response ON with two added data bytes (short)
+    ARSON2 = (0xDD, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response OFF with two added data bytes (short)
+    ARSOF2 = (0xDE, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory ON event with three added bytes (long)
+    ACON3 = (0xF0, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory OFF event with three added bytes (long)
+    ACOF3 = (0xF1, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response event ON with three added bytes (long)
+    ARON3 = (0xF3, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response event OFF with three added bytes (long)
+    AROF3 = (0xF4, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory node data event. 5 data bytes (long)
+    ACDAT = (0xF6, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory node data response. 5 data bytes (long)
+    ARDAT = (0xF7, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory ON event with three added bytes (short)
+    ASON3 = (0xF8, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory OFF event with three added bytes (short)
+    ASOF3 = (0xF9, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory node data event. 5 data bytes (short)
+    DDES = (0xFA, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory node data response. 5 data bytes (short)
+    DDRS = (0xFB, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    #: Accessory response ON with 3 added data bytes (short)
+    ARSON3 = (0xFD, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+    # Accessory response OFF with 3 added data bytes (short)
+    ARSOF3 = (0xFE, MinorPriority.LOW, OpCodeKind.ACCESSORY)
+
+    # ---- DCC Opcodes
     TOF = (0x04, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)  # DCC track off
     TON = (0x05, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)  # DCC Track on
     ESTOP = (0x06, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)  # Emergency stop all
@@ -848,22 +666,27 @@ class OpCode(bytes, Enum):
 
     @property
     def byte_count(self):
+        """Number of bytes following opcode."""
         return self.value >> 5
 
     @property
     def is_general(self):
+        """Test if it's a general opcode."""
         return self._kind == OpCodeKind.GENERAL
 
     @property
     def is_config(self):
+        """Test if it's a configuration opcode."""
         return self._kind == OpCodeKind.CONFIG
 
     @property
     def is_accessory(self):
-        return self._kind == OpCodeKind.ACCESORY
+        """Test if it's an accessory opcode."""
+        return self._kind == OpCodeKind.ACCESSORY
 
     @property
     def is_dcc(self):
+        """Test if it's a DCC opcode."""
         return self._kind == OpCodeKind.DCC
 
 
