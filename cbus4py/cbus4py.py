@@ -8,202 +8,13 @@ Attributes:
 """
 import re
 import struct
-from enum import Enum, IntFlag, unique
+from enum import Enum, IntEnum, IntFlag, unique
 from typing import Optional, Type
+
 from pkg_resources import get_distribution as _get_distribution
 
 #: module version
 __version__ = _get_distribution("cbus4py").version
-
-
-# ----- Exceptions -----------------------------------------------------------------------------------------------------
-class CBusError(Exception):
-    """
-    Generic CBUS Error.
-    All CBUS errors have a integer code that can be accessed using the :obj:`code` property of the exception.
-
-    """
-
-    def __init__(self, message: str, code: int) -> None:
-        super().__init__(message)
-        self._code = code
-
-    @property
-    def code(self):
-        """Returns the exception error code."""
-        return self._code
-
-
-class CommadStationError(CBusError):
-    """Command Station Error."""
-
-    #: Error code for :class:`LocoStackFullError`.
-    LOCO_STACK_FULL = 1
-    #: Error code for :class:`LocoAddressTakenError`.
-    LOCO_ADDRESS_TAKEN = 2
-    #: Error code for :class:`SessionNotPresentError`.
-    SESSION_NOT_PRESENT = 3
-    #: Error code for :class:`ConsistEmptyError`.
-    CONSIST_EMPTY = 4
-    #: Error code for :class:`LocoNotFoundError`.
-    LOCO_NOT_FOUND = 5
-    #: Error code for :class:`CanBusError`.
-    CAN_BUS_ERROR = 6
-    #: Error code for :class:`InvalidRequestError`.
-    INVALID_REQUEST = 7
-    #: Error code for :class:`SessionCancelledError`.
-    SESSION_CANCELLED = 8
-
-
-class LocoStackFullError(CommadStationError):
-    """Loco Stack Full Error. Error code :const:`CommadStationError.LOCO_STACK_FULL`."""
-
-    def __init__(self) -> None:
-        super().__init__("CS: Loco stack full.", self.LOCO_STACK_FULL)
-
-
-class LocoAddressTakenError(CommadStationError):
-    """Loco Address Taken Error. Error code :const:`CommadStationError.LOCO_ADDRESS_TAKEN`."""
-
-    def __init__(self) -> None:
-        super().__init__("CS: Loco address taken.", self.LOCO_ADDRESS_TAKEN)
-
-
-class SessionNotPresentError(CommadStationError):
-    """Session Not Present Error. Error code :const:`CommadStationError.SESSION_NOT_PRESENT`."""
-
-    def __init__(self) -> None:
-        super().__init__("CS: Session not present.", self.SESSION_NOT_PRESENT)
-
-
-class ConsistEmptyError(CommadStationError):
-    """Consist Empty Error. Error code :const:`CommadStationError.CONSIST_EMPTY`."""
-
-    def __init__(self) -> None:
-        super().__init__("CS: Consist empty.", self.CONSIST_EMPTY)
-
-
-class LocoNotFoundError(CommadStationError):
-    """Loco Not Found Error. Error code :const:`CommadStationError.LOCO_NOT_FOUND`."""
-
-    def __init__(self) -> None:
-        super().__init__("CS: Loco not found.", self.LOCO_NOT_FOUND)
-
-
-class CanBusError(CommadStationError):
-    """CAN Bus Error. Error code :const:`CommadStationError.CAN_BUS_ERROR`."""
-
-    def __init__(self) -> None:
-        super().__init__("CS: CAN bus error.", self.CAN_BUS_ERROR)
-
-
-class InvalidRequestError(CommadStationError):
-    """Invalid Request Error. Error code :const:`CommadStationError.INVALID_REQUEST`."""
-
-    def __init__(self) -> None:
-        super().__init__("CS: Invalid request.", self.INVALID_REQUEST)
-
-
-class SessionCancelledError(CommadStationError):
-    """Session Cancelled Error. Error code :const:`CommadStationError.SESSION_CANCELLED`."""
-
-    def __init__(self) -> None:
-        super().__init__("CS: Session cancelled.", self.SESSION_CANCELLED)
-
-
-class ConfigError(CBusError):
-    """Configuration Error."""
-
-    #: Error code for :class:`CommandNotSupportedError`.
-    COMMAND_NOT_SUPPORTED = 1
-    #: Error code for :class:`NotInLearnModeError`.
-    NOT_IN_LEARN_MODE = 2
-    #: Error code for :class:`NotInSetupModeError`.
-    NOT_IN_SETUP_MODE = 3
-    #: Error code for :class:`TooManyEventsError`.
-    TOO_MANY_EVENTS = 4
-    #: Error code for :class:`InvalidEventVariableIndexError`.
-    INVALID_EVENT_VARIABLE_INDEX = 6
-    #: Error code for :class:`InvalidEventError`.
-    INVALID_EVENT = 7
-    #: Error code for :class:`InvalidParameterIndexError`.
-    INVALID_PARAMETER_INDEX = 9
-    #: Error code for :class:`InvalidNodeVariableIndexError`.
-    INVALID_NODE_VARIABLE_INDEX = 10
-    #: Error code for :class:`InvalidEventVariableValueError`.
-    INVALID_EVENT_VARIABLE_VALUE = 11
-    #: Error code for :class:`InvalidNodeVariableValueError`.
-    INVALID_NODE_VARIABLE_VALUE = 12
-
-
-class CommandNotSupportedError(ConfigError):
-    """Command Not Supported Error. Error code :const:`CommadStationError.COMMAND_NOT_SUPPORTED`."""
-
-    def __init__(self) -> None:
-        super().__init__("CFG: Command not supported.", self.COMMAND_NOT_SUPPORTED)
-
-
-class NotInLearnModeError(ConfigError):
-    """Not In Learn Mode Error. Error code :const:`CommadStationError.NOT_IN_LEARN_MODE`."""
-
-    def __init__(self) -> None:
-        super().__init__("CFG: Not in learn mode.", self.NOT_IN_LEARN_MODE)
-
-
-class NotInSetupModeError(ConfigError):
-    """Not In Setup Mode Error. Error code :const:`CommadStationError.NOT_IN_SETUP_MODE`."""
-
-    def __init__(self) -> None:
-        super().__init__("CFG: Not in setup mode.", self.NOT_IN_SETUP_MODE)
-
-
-class TooManyEventsError(ConfigError):
-    """Too Many Events Error. Error code :const:`CommadStationError.TOO_MANY_EVENTS`."""
-
-    def __init__(self) -> None:
-        super().__init__("CFG: Too many events", self.TOO_MANY_EVENTS)
-
-
-class InvalidEventError(ConfigError):
-    """Invalid Event Error. Error code :const:`CommadStationError.INVALID_EVENT`."""
-
-    def __init__(self) -> None:
-        super().__init__("CFG: Invalid event.", self.INVALID_EVENT)
-
-
-class InvalidEventVariableIndexError(ConfigError):
-    """Invalid Event Variable Index Error. Error code :const:`CommadStationError.INVALID_EVENT_VARIABLE_INDEX`."""
-
-    def __init__(self) -> None:
-        super().__init__("CFG: Invalid event variable index.", self.INVALID_EVENT_VARIABLE_INDEX)
-
-
-class InvalidEventVariableValueError(ConfigError):
-    """Invalid Event Variable Value Error. Error code :const:`CommadStationError.INVALID_EVENT_VARIABLE_VALUE`."""
-
-    def __init__(self) -> None:
-        super().__init__("CFG: Invalid event variable value.", self.INVALID_EVENT_VARIABLE_VALUE)
-
-
-class InvalidNodeVariableIndexError(ConfigError):
-    """Invalid Node Variable Index Error. Error code :const:`CommadStationError.INVALID_NODE_VARIABLE_INDEX`."""
-
-    def __init__(self) -> None:
-        super().__init__("CFG: Invalid node variable index.", self.INVALID_NODE_VARIABLE_INDEX)
-
-
-class InvalidNodeVariableValueError(ConfigError):
-    """Invalid Node Variable Value Error. Error code :const:`CommadStationError.INVALID_NODE_VARIABLE_VALUE`."""
-
-    def __init__(self) -> None:
-        super().__init__("CFG: Invalid node variable value.", self.INVALID_NODE_VARIABLE_VALUE)
-
-
-class InvalidParameterIndexError(ConfigError):
-    """Invalid Parameter Index Error. Error code :const:`CommadStationError.INVALID_PARAMETER_INDEX`."""
-
-    def __init__(self) -> None:
-        super().__init__("CFG: Invalid parameter index.", self.INVALID_PARAMETER_INDEX)
 
 
 # ----- Node Flags -----------------------------------------------------------------------------------------------------
@@ -386,7 +197,11 @@ class Header:
 
 
 # ----- CBUS Message ---------------------------------------------------------------------------------------------------
-class OpCodeKind(Enum):
+class OpCodeKind(IntEnum):
+    """
+    Enum for indicating the type of an opcode.
+    """
+
     GENERAL = 0
     CONFIG = 1
     ACCESSORY = 2
@@ -395,6 +210,15 @@ class OpCodeKind(Enum):
 
 @unique
 class OpCode(bytes, Enum):
+    """
+    Enumeration of the CBUS opcodes.
+    It inherits from `bytes` in order to ease the encoding/decoding of CBUS messages.
+
+    Attributes:
+        _minor_prio (MinorPriority): opcode's minor priority
+        _kind (OpCodeKind): opcode's type
+    """
+
     def __init__(self, *args) -> None:
         super().__init__()
         self._minor_prio: MinorPriority = args[1]
@@ -407,6 +231,7 @@ class OpCode(bytes, Enum):
 
     @property
     def minor_priority(self) -> MinorPriority:
+        """Opcode's minor priority."""
         return self._minor_prio
 
     # ---- GENERAL Opcodes
@@ -596,73 +421,80 @@ class OpCode(bytes, Enum):
     DDRS = (0xFB, MinorPriority.LOW, OpCodeKind.ACCESSORY)
     #: Accessory response ON with 3 added data bytes (short)
     ARSON3 = (0xFD, MinorPriority.LOW, OpCodeKind.ACCESSORY)
-    # Accessory response OFF with 3 added data bytes (short)
+    #: Accessory response OFF with 3 added data bytes (short)
     ARSOF3 = (0xFE, MinorPriority.LOW, OpCodeKind.ACCESSORY)
 
     # ---- DCC Opcodes
-    TOF = (0x04, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)  # DCC track off
-    TON = (0x05, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)  # DCC Track on
-    ESTOP = (0x06, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)  # Emergency stop all
-    RTOF = (0x08, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)  # Request track off
-    RTON = (0x09, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)  # Request track on
-    RESTP = (0x0A, MinorPriority.HIGH, OpCodeKind.DCC)  # Request emergency stop all
-    KLOC = (0x21, MinorPriority.NORMAL, OpCodeKind.DCC)  # Release engine
-    QLOC = (0x22, MinorPriority.NORMAL, OpCodeKind.DCC)  # Query engine
-    DKEEP = (0x23, MinorPriority.NORMAL, OpCodeKind.DCC)  # Session keepalive from CAB
-    RLOC = (0x40, MinorPriority.NORMAL, OpCodeKind.DCC)  # Request engine session
-    QCON = (0x41, MinorPriority.NORMAL, OpCodeKind.DCC)  # Query consist
-    ALOC = (
-        0x43,
-        MinorPriority.NORMAL,
-        OpCodeKind.DCC,
-    )  # Allocate loco to ‘assignment or activity’
-    STMOD = (0x44, MinorPriority.NORMAL, OpCodeKind.DCC)  # Set CAB session mode
-    PCON = (
-        0x45,
-        MinorPriority.NORMAL,
-        OpCodeKind.DCC,
-    )  # Set loco into consist (advanced)
-    KCON = (0x46, MinorPriority.NORMAL, OpCodeKind.DCC)  # Remove loco from consist
-    DSPD = (0x47, MinorPriority.NORMAL, OpCodeKind.DCC)  # Set engine speed / direction
-    DFLG = (0x48, MinorPriority.NORMAL, OpCodeKind.DCC)  # Set engine (session) flags
-    DFNON = (0x49, MinorPriority.NORMAL, OpCodeKind.DCC)  # Set engine function ON
-    DFNOF = (0x4A, MinorPriority.NORMAL, OpCodeKind.DCC)  # Set engine function OFF
-    SSTAT = (0x4C, MinorPriority.NORMAL, OpCodeKind.DCC)  # Service mode status
-    DFUN = (
-        0x60,
-        MinorPriority.NORMAL,
-        OpCodeKind.DCC,
-    )  # Set engine functions (DCC format)
-    GLOC = (
-        0x61,
-        MinorPriority.NORMAL,
-        OpCodeKind.DCC,
-    )  # Get engine session – used in dispatching
-    ERR = (0x63, MinorPriority.NORMAL, OpCodeKind.DCC)  # Command station error report
-    RDCC3 = (0x80, MinorPriority.NORMAL, OpCodeKind.DCC)  # Request 3 byte DCC packet.
-    WCVO = (0x82, MinorPriority.NORMAL, OpCodeKind.DCC)  # Write CV in OPS mode (byte)
-    WCVB = (0x83, MinorPriority.NORMAL, OpCodeKind.DCC)  # Write CV in OPS mode (bit)
-    QCVS = (
-        0x84,
-        MinorPriority.NORMAL,
-        OpCodeKind.DCC,
-    )  # Request read CV (service mode)
-    PCVS = (0x85, MinorPriority.NORMAL, OpCodeKind.DCC)  # Report CV  (sevice mode)
-    RDCC4 = (0xA0, MinorPriority.NORMAL, OpCodeKind.DCC)  # Request 4 byte DCC packet.
-    WCVS = (0xA2, MinorPriority.NORMAL, OpCodeKind.DCC)  # Write CV in service mode
-    RDCC5 = (0xC0, MinorPriority.NORMAL, OpCodeKind.DCC)  # Request 5 byte DCC packet.
-    WCVOA = (
-        0xC1,
-        MinorPriority.NORMAL,
-        OpCodeKind.DCC,
-    )  # Write CV in OPS mode by address
-    RDCC6 = (0xE0, MinorPriority.NORMAL, OpCodeKind.DCC)  # Request 6 byte DCC packet.
-    PLOC = (
-        0xE1,
-        MinorPriority.NORMAL,
-        OpCodeKind.DCC,
-    )  # Engine report from command station
-    STAT = (0xE3, MinorPriority.NORMAL, OpCodeKind.DCC)  # Command station status report
+    #: DCC track off
+    TOF = (0x04, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)
+    #: DCC Track on
+    TON = (0x05, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)
+    #: Emergency stop all
+    ESTOP = (0x06, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)
+    #: Request track off
+    RTOF = (0x08, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)
+    #: Request track on
+    RTON = (0x09, MinorPriority.ABOVE_NORMAL, OpCodeKind.DCC)
+    #: Request emergency stop all
+    RESTP = (0x0A, MinorPriority.HIGH, OpCodeKind.DCC)
+    #: Release engine
+    KLOC = (0x21, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Query engine
+    QLOC = (0x22, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Session keepalive from CAB
+    DKEEP = (0x23, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Request engine session
+    RLOC = (0x40, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Query consist
+    QCON = (0x41, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Allocate loco to ‘assignment or activity’
+    ALOC = (0x43, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Set CAB session mode
+    STMOD = (0x44, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Set loco into consist (advanced)
+    PCON = (0x45, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Remove loco from consist
+    KCON = (0x46, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Set engine speed / direction
+    DSPD = (0x47, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Set engine (session) flags
+    DFLG = (0x48, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Set engine function ON
+    DFNON = (0x49, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Set engine function OFF
+    DFNOF = (0x4A, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Service mode status
+    SSTAT = (0x4C, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Set engine functions (DCC format)
+    DFUN = (0x60, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Get engine session – used in dispatching
+    GLOC = (0x61, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Command station error report
+    ERR = (0x63, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Request 3 byte DCC packet.
+    RDCC3 = (0x80, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Write CV in OPS mode (byte)
+    WCVO = (0x82, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Write CV in OPS mode (bit)
+    WCVB = (0x83, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Request read CV (service mode)
+    QCVS = (0x84, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Report CV  (sevice mode)
+    PCVS = (0x85, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Request 4 byte DCC packet.
+    RDCC4 = (0xA0, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Write CV in service mode
+    WCVS = (0xA2, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Request 5 byte DCC packet.
+    RDCC5 = (0xC0, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Write CV in OPS mode by address
+    WCVOA = (0xC1, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Request 6 byte DCC packet
+    RDCC6 = (0xE0, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Engine report from command station
+    PLOC = (0xE1, MinorPriority.NORMAL, OpCodeKind.DCC)
+    #: Command station status report
+    STAT = (0xE3, MinorPriority.NORMAL, OpCodeKind.DCC)
 
     @property
     def byte_count(self):
