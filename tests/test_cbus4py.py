@@ -1,7 +1,7 @@
 """Tests of cbus4py module."""
 from unittest import TestCase, main
 
-import cbus4py as cbus
+import cbus4py.cbus4py as cbus
 
 # TODO: Tests de excepciones,
 
